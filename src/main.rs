@@ -1,7 +1,7 @@
 use macroquad::prelude::*;
 use chaikin::{ChaikinState, draw_points, draw_lines, draw_control_point_circles};
 
-#[macroquad::main("Chaikin's Algorithm Animation")]
+#[macroquad::main("Chaikin")]
 async fn main() {
     let mut state = ChaikinState::new();
     let mut mouse_pressed_last_frame = false;
@@ -46,7 +46,7 @@ async fn main() {
         clear_background(BLACK);
 
         if state.current_points.len() > 1 {
-            draw_lines(&state.current_points, BLUE, 2.0);
+            draw_lines(&state.current_points, WHITE, 2.0);
         }
 
         if !state.control_points.is_empty() {

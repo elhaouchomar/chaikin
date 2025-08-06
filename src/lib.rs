@@ -25,8 +25,6 @@ pub struct ChaikinState {
     pub last_update: Instant,
     pub step_duration: Duration,
     pub dragging: Option<usize>,
-    pub show_message: bool,
-    pub message_timer: Instant,
 }
 
 impl ChaikinState {
@@ -39,8 +37,6 @@ impl ChaikinState {
             last_update: Instant::now(),
             step_duration: Duration::from_millis(800),
             dragging: None,
-            show_message: false,
-            message_timer: Instant::now(),
         }
     }
 
@@ -55,16 +51,9 @@ impl ChaikinState {
         self.current_points.clear();
         self.animation_running = false;
         self.current_step = 0;
-        self.show_message = false;
     }
 
     pub fn start_animation(&mut self) {
-        if self.control_points.is_empty() {
-            self.show_message = true;
-            self.message_timer = Instant::now();
-            return;
-        }
-
         if self.control_points.len() <= 2 {
             self.current_points = self.control_points.clone();
             self.animation_running = false;
@@ -110,9 +99,11 @@ impl ChaikinState {
                 self.animation_running = false;
             }
         }
-
-        if self.show_message && self.message_timer.elapsed() >= Duration::from_secs(2) {
-            self.show_message = false;
+        if !self.animation_running && self.current_step >= 7 {
+            self.current_step = 0;
+            self.current_points = self.control_points.clone();
+            self.animation_running = true;
+            self.last_update = Instant::now();
         }
     }
 
@@ -156,6 +147,6 @@ pub fn draw_lines(points: &[Point], color: Color, thickness: f32) {
 
 pub fn draw_control_point_circles(points: &[Point]) {
     for point in points {
-        draw_circle(point.x, point.y, 4.0, RED);
+        draw_circle(point.x, point.y, 2.0, BLUE);
     }
 }
