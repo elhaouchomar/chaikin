@@ -1,5 +1,5 @@
 use macroquad::prelude::*;
-use std::time::{ Duration, Instant };
+use std::time::{Duration, Instant};
 
 #[derive(Clone, Debug)]
 pub struct Point {
@@ -24,7 +24,6 @@ pub struct ChaikinState {
     pub current_step: usize,
     pub last_update: Instant,
     pub step_duration: Duration,
-    pub dragging: Option<usize>,
 }
 
 impl ChaikinState {
@@ -36,7 +35,6 @@ impl ChaikinState {
             current_step: 0,
             last_update: Instant::now(),
             step_duration: Duration::from_millis(800),
-            dragging: None,
         }
     }
 
@@ -105,29 +103,6 @@ impl ChaikinState {
             self.animation_running = true;
             self.last_update = Instant::now();
         }
-    }
-
-    fn find_point_at(&self, x: f32, y: f32) -> Option<usize> {
-        let click_point = Point::new(x, y);
-        self.control_points.iter().position(|p| p.distance_to(&click_point) <= 15.0)
-    }
-
-    pub fn start_drag(&mut self, x: f32, y: f32) {
-        if !self.animation_running {
-            self.dragging = self.find_point_at(x, y);
-        }
-    }
-
-    pub fn update_drag(&mut self, x: f32, y: f32) {
-        if let Some(index) = self.dragging {
-            if index < self.control_points.len() {
-                self.control_points[index] = Point::new(x, y);
-            }
-        }
-    }
-
-    pub fn end_drag(&mut self) {
-        self.dragging = None;
     }
 }
 

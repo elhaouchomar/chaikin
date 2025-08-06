@@ -1,5 +1,5 @@
+use chaikin::{ChaikinState, draw_control_point_circles, draw_lines, draw_points};
 use macroquad::prelude::*;
-use chaikin::{ ChaikinState, draw_points, draw_lines, draw_control_point_circles };
 
 #[macroquad::main("RAID-2 - CHAIKIN")]
 async fn main() {
@@ -22,22 +22,11 @@ async fn main() {
         let mouse_pos = mouse_position();
         let mouse_pressed = is_mouse_button_down(MouseButton::Left);
         let mouse_just_pressed = mouse_pressed && !mouse_pressed_last_frame;
-        let mouse_just_released = !mouse_pressed && mouse_pressed_last_frame;
 
         if mouse_just_pressed {
-            state.start_drag(mouse_pos.0, mouse_pos.1);
-
-            if state.dragging.is_none() && !state.animation_running {
+            if !state.animation_running {
                 state.add_point(mouse_pos.0, mouse_pos.1);
             }
-        }
-
-        if mouse_pressed && state.dragging.is_some() {
-            state.update_drag(mouse_pos.0, mouse_pos.1);
-        }
-
-        if mouse_just_released {
-            state.end_drag();
         }
 
         mouse_pressed_last_frame = mouse_pressed;
