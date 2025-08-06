@@ -26,11 +26,6 @@ async fn main() {
             }
             last = Some(*p);
         }
-        // if !draw && chaikin_turns != 0 {
-        //     let new_points: Vec<(f32, f32)> = Vec::new();
-        //     for p in &points {
-        //     }
-        // }
         if is_mouse_button_down(MouseButton::Left) && draw {
             points.push(mouse_position());
         }

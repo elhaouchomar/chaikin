@@ -9,13 +9,12 @@ pub fn my_draw_line(point1: (f32, f32), point2: (f32, f32)) {
 
 pub fn chaikin_turns(original_points: Vec<(f32, f32)>) -> Vec<(f32, f32)> {
     let mut points: Vec<(f32, f32)> = original_points.clone();
-    points = chaikin_smooth(points, 2);
+    points = chaikin_smooth(points, 7);
     points
 }
 
 fn chaikin_smooth(points: Vec<(f32, f32)>, iterations: usize) -> Vec<(f32, f32)> {
     let mut result = points;
-
     for _ in 0..iterations {
         let mut new_points = Vec::with_capacity(result.len() * 2);
         for i in 0..result.len() - 1 {
