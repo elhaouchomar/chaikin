@@ -1,56 +1,62 @@
 use macroquad::prelude::*;
-use module::{ my_draw_line, chaikin_turns };
+use chaikin::{ChaikinState, draw_points, draw_lines, draw_control_point_circles};
 
-
-#[macroquad::main("My Macroquad Game")]
+#[macroquad::main("Chaikin")]
 async fn main() {
-    let delay = 2.0;
-    let mut last_time = 0.0;
-    // let mut counter = 0;
-    let mut current_iter = 0;
-    let mut points: Vec<(f32, f32)> = Vec::new();
-    let mut smoothed_points: Vec<(f32, f32)> = Vec::new();
-    let mut draw: bool = true;
-    while !is_key_pressed(KeyCode::Escape) {
-        clear_background(WHITE);
-        if is_key_pressed(KeyCode::Enter) && draw {
-            draw = false;
-            smoothed_points = points.clone();
-        }
-        if draw == false {
-            let now = get_time();
-            if  now - last_time  > delay {
-                if current_iter < 7 {
-                    smoothed_points = chaikin_turns(&smoothed_points);
-                    current_iter += 1;            
-                } else {
-                    current_iter = 0;
-                    smoothed_points = points.clone();
-                }
-            }
-        }
-        
+    let mut state = ChaikinState::new();
+    let mut mouse_pressed_last_frame = false;
 
-        if is_mouse_button_down(MouseButton::Left) && draw && (points.len() == 0 || points[points.len()- 1] != mouse_position()) {
-            points.push(mouse_position());
-            println!("new points >>> {:?}", points);
+    loop {
+        if is_key_pressed(KeyCode::Escape) {
+            break;
         }
-        
-        let mut last: Option<(f32, f32)> = None;
-        for p in &smoothed_points {
-            draw_rectangle(p.0, p.1, 2.0, 2.0, BLACK);
-            match Some(last) {
-                None => {
-                    todo!();
-                }
-                _ => {
-                    if draw {
-                        my_draw_line(last.unwrap_or((0.0, 0.0)), *p);
-                    }
-                }
+
+        if is_key_pressed(KeyCode::Enter) {
+            state.start_animation();
+        }
+
+        if is_key_pressed(KeyCode::C) {
+            state.clear();
+        }
+
+        let mouse_pos = mouse_position();
+        let mouse_pressed = is_mouse_button_down(MouseButton::Left);
+        let mouse_just_pressed = mouse_pressed && !mouse_pressed_last_frame;
+        let mouse_just_released = !mouse_pressed && mouse_pressed_last_frame;
+
+        if mouse_just_pressed {
+            state.start_drag(mouse_pos.0, mouse_pos.1);
+
+            if state.dragging.is_none() && !state.animation_running {
+                state.add_point(mouse_pos.0, mouse_pos.1);
             }
-            last = Some(*p);
         }
+
+        if mouse_pressed && state.dragging.is_some() {
+            state.update_drag(mouse_pos.0, mouse_pos.1);
+        }
+
+        if mouse_just_released {
+            state.end_drag();
+        }
+
+        mouse_pressed_last_frame = mouse_pressed;
+        state.update();
+
+        clear_background(BLACK);
+
+        if state.current_points.len() > 1 {
+            draw_lines(&state.current_points, WHITE, 2.0);
+        }
+
+        if !state.control_points.is_empty() {
+            draw_control_point_circles(&state.control_points);
+        }
+
+        if state.animation_running && state.current_points.len() > 2 {
+            draw_points(&state.current_points, GREEN, 2.0);
+        }
+
         next_frame().await;
     }
 }
