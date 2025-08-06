@@ -5,14 +5,11 @@ use module::{ my_draw_line, chaikin_turns };
 async fn main() {
     let mut points: Vec<(f32, f32)> = Vec::new();
     let mut draw: bool = true;
-    let chaikin_turn: u8 = 7;
     while !is_key_pressed(KeyCode::Escape) {
         clear_background(WHITE);
         if is_key_pressed(KeyCode::Enter) && draw {
             draw = false;
-            chaikin_turns(points.clone());
-        } else if !draw {
-            chaikin_turns(points.clone());
+            points = chaikin_turns(points.clone());
         }
         let mut last: Option<(f32, f32)> = None;
         for p in &points {
