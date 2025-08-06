@@ -1,5 +1,5 @@
 use macroquad::prelude::*;
-use std::time::{Duration, Instant};
+use std::time::{ Duration, Instant };
 
 #[derive(Clone, Debug)]
 pub struct Point {
@@ -109,9 +109,7 @@ impl ChaikinState {
 
     fn find_point_at(&self, x: f32, y: f32) -> Option<usize> {
         let click_point = Point::new(x, y);
-        self.control_points
-            .iter()
-            .position(|p| p.distance_to(&click_point) <= 15.0)
+        self.control_points.iter().position(|p| p.distance_to(&click_point) <= 15.0)
     }
 
     pub fn start_drag(&mut self, x: f32, y: f32) {

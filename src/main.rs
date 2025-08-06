@@ -1,7 +1,7 @@
 use macroquad::prelude::*;
-use chaikin::{ChaikinState, draw_points, draw_lines, draw_control_point_circles};
+use chaikin::{ ChaikinState, draw_points, draw_lines, draw_control_point_circles };
 
-#[macroquad::main("Chaikin")]
+#[macroquad::main("RAID-2 - CHAIKIN")]
 async fn main() {
     let mut state = ChaikinState::new();
     let mut mouse_pressed_last_frame = false;
